@@ -4,7 +4,7 @@
 import json
 import requests
 import argparse
-
+import pathlib
 
 class PC:
     """PC (Print Color)
@@ -100,18 +100,21 @@ def getPDFlist(domain, protocol):
         return []
 
 
-def write_data_to_file(result_final, output):
-    print("\n" + PC.ok_box + "Writing Result to file...")
-    print("\n" + PC.ok_box + f"Result to write: {result_final}")
-
-    with open(output, "w") as output_file:
-        json.dump(result_final, output_file, indent=2)
+# def write_data_to_file(result_final, output):
+#     print("\n" + PC.ok_box + "Writing Result to file...")
+#     print("\n" + PC.ok_box + f"Result to write: {result_final}")
+#
+#     with open(output, "w") as output_file:
+#         json.dump(result_final, output_file, indent=2)
 
 
 def main():
     """Main Function"""
     args = parse_arguments()
     outputFile = args.output
+
+    root_path = pathlib.Path(__file__).parent
+    file_path = root_path.joinpath(outputFile)
 
     print("\n" + PC.note_box + "Web Archive PDF Downloader ")
     print(PC.note_box + "Target domain : " + args.domain)
@@ -120,8 +123,11 @@ def main():
     # Getting the PDF list
     result_final = getPDFlist(args.domain, args.http)
 
-    # Downloading PDF
-    write_data_to_file(result_final, outputFile)
+    # Writing PDF paths to File:
+    print("\n" + PC.ok_box + "Writing Result to file...")
+    print("\n" + PC.ok_box + f"Result to write: {result_final}")
+
+    file_path.write_text(json.dumps(result_final))
 
     print("\n" + PC.ok_box + "Everything's done !")
 
